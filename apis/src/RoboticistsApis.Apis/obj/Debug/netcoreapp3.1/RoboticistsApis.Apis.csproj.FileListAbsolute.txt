@@ -1,0 +1,12 @@
+/Users/albert/_proj/roboticists/roboticists-apis/RoboticistsApis/src/RoboticistsApis.Apis/bin/Debug/netcoreapp3.1/RoboticistsApis.Apis.deps.json
+/Users/albert/_proj/roboticists/roboticists-apis/RoboticistsApis/src/RoboticistsApis.Apis/bin/Debug/netcoreapp3.1/RoboticistsApis.Apis.dll
+/Users/albert/_proj/roboticists/roboticists-apis/RoboticistsApis/src/RoboticistsApis.Apis/bin/Debug/netcoreapp3.1/RoboticistsApis.Apis.pdb
+/Users/albert/_proj/roboticists/roboticists-apis/RoboticistsApis/src/RoboticistsApis.Apis/obj/Debug/netcoreapp3.1/RoboticistsApis.Apis.csprojAssemblyReference.cache
+/Users/albert/_proj/roboticists/roboticists-apis/RoboticistsApis/src/RoboticistsApis.Apis/obj/Debug/netcoreapp3.1/RoboticistsApis.Apis.AssemblyInfoInputs.cache
+/Users/albert/_proj/roboticists/roboticists-apis/RoboticistsApis/src/RoboticistsApis.Apis/obj/Debug/netcoreapp3.1/RoboticistsApis.Apis.AssemblyInfo.cs
+/Users/albert/_proj/roboticists/roboticists-apis/RoboticistsApis/src/RoboticistsApis.Apis/obj/Debug/netcoreapp3.1/RoboticistsApis.Apis.csproj.CoreCompileInputs.cache
+/Users/albert/_proj/roboticists/roboticists-apis/RoboticistsApis/src/RoboticistsApis.Apis/obj/Debug/netcoreapp3.1/RoboticistsApis.Apis.dll
+/Users/albert/_proj/roboticists/roboticists-apis/RoboticistsApis/src/RoboticistsApis.Apis/obj/Debug/netcoreapp3.1/RoboticistsApis.Apis.pdb
+/Users/albert/_proj/roboticists/roboticists-apis/RoboticistsApis/src/RoboticistsApis.Apis/bin/Debug/netcoreapp3.1/RoboticistsApis.Apis.runtimeconfig.json
+/Users/albert/_proj/roboticists/roboticists-apis/RoboticistsApis/src/RoboticistsApis.Apis/bin/Debug/netcoreapp3.1/RoboticistsApis.Apis.runtimeconfig.dev.json
+/Users/albert/_proj/roboticists/roboticists-apis/RoboticistsApis/src/RoboticistsApis.Apis/obj/Debug/netcoreapp3.1/RoboticistsApis.Apis.genruntimeconfig.cache
