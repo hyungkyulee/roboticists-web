@@ -71,22 +71,16 @@ package:
   individually: true
 
 functions:
-  hello:
-    handler: RoboticistsApis.Apis::RoboticistsApis.Apis.Handler::Hello
-
-    # you can add packaging information here
+  createPost:
+    handler: RoboticistsApis.Apis::RoboticistsApis.Apis.Controllers.PostsController::Post
     package:
       artifact: bin/Release/netcoreapp3.1/package.zip
-    #  exclude:
-    #    - exclude-me.js
-    #    - exclude-me-dir/**
-#    The following are a few example events you can configure
-#    NOTE: Please make sure to change your handler code to work with those events
-#    Check the event documentation for details
-#    events:
-#      - httpApi:
-#          path: /users/create
-#          method: get
+    events:
+      - http:
+          path: posts
+          method: post
+          cors: true
+
 #      - websocket: $connect
 #      - s3: ${env:BUCKET}
 #      - schedule: rate(10 minutes)

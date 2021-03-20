@@ -86,10 +86,10 @@
               }
             }
           },
-          "HelloLogGroup": {
+          "CreatePostLogGroup": {
             "Type": "AWS::Logs::LogGroup",
             "Properties": {
-              "LogGroupName": "/aws/lambda/roboticists-apis-dev-hello"
+              "LogGroupName": "/aws/lambda/roboticists-apis-dev-createPost"
             }
           },
           "IamRoleLambdaExecution": {
@@ -169,18 +169,18 @@
               }
             }
           },
-          "HelloLambdaFunction": {
+          "CreatePostLambdaFunction": {
             "Type": "AWS::Lambda::Function",
             "Properties": {
               "Code": {
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/roboticists-apis/dev/1616241646730-2021-03-20T12:00:46.730Z/package.zip"
+                "S3Key": "serverless/roboticists-apis/dev/1616268732829-2021-03-20T19:32:12.829Z/package.zip"
               },
-              "Handler": "RoboticistsApis.Apis::RoboticistsApis.Apis.Handler::Hello",
+              "Handler": "RoboticistsApis.Apis::RoboticistsApis.Apis.Controllers.PostsController::Post",
               "Runtime": "dotnetcore3.1",
-              "FunctionName": "roboticists-apis-dev-hello",
+              "FunctionName": "roboticists-apis-dev-createPost",
               "MemorySize": 1024,
               "Timeout": 6,
               "Role": {
@@ -191,17 +191,182 @@
               }
             },
             "DependsOn": [
-              "HelloLogGroup"
+              "CreatePostLogGroup"
             ]
           },
-          "HelloLambdaVersion1wXbYyMbbeIlpbfwYMT0OxvXP5Yc6UVqd7insDbn9s": {
+          "CreatePostLambdaVersionL4SzkUgtLqI56R63i4IpsyQl973zRGZ1Iw6H1Q8d4V4": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
-                "Ref": "HelloLambdaFunction"
+                "Ref": "CreatePostLambdaFunction"
               },
-              "CodeSha256": "qmm6ux86CzTH/Z6RuOBfgGf0/kEYMy/y8+TfRjBAEsQ="
+              "CodeSha256": "/uL2QGw2ZCq42R5KxjY27SdMtfcZAUCBoOdiFoNrdaw="
+            }
+          },
+          "ApiGatewayRestApi": {
+            "Type": "AWS::ApiGateway::RestApi",
+            "Properties": {
+              "Name": "dev-roboticists-apis",
+              "EndpointConfiguration": {
+                "Types": [
+                  "EDGE"
+                ]
+              },
+              "Policy": ""
+            }
+          },
+          "ApiGatewayResourcePosts": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Fn::GetAtt": [
+                  "ApiGatewayRestApi",
+                  "RootResourceId"
+                ]
+              },
+              "PathPart": "posts",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayMethodPostsOptions": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "AuthorizationType": "NONE",
+              "HttpMethod": "OPTIONS",
+              "MethodResponses": [
+                {
+                  "StatusCode": "200",
+                  "ResponseParameters": {
+                    "method.response.header.Access-Control-Allow-Origin": true,
+                    "method.response.header.Access-Control-Allow-Headers": true,
+                    "method.response.header.Access-Control-Allow-Methods": true
+                  },
+                  "ResponseModels": {}
+                }
+              ],
+              "RequestParameters": {},
+              "Integration": {
+                "Type": "MOCK",
+                "RequestTemplates": {
+                  "application/json": "{statusCode:200}"
+                },
+                "ContentHandling": "CONVERT_TO_TEXT",
+                "IntegrationResponses": [
+                  {
+                    "StatusCode": "200",
+                    "ResponseParameters": {
+                      "method.response.header.Access-Control-Allow-Origin": "'*'",
+                      "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                      "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,POST'"
+                    },
+                    "ResponseTemplates": {
+                      "application/json": "#set($origin = $input.params(\"Origin\"))\n#if($origin == \"\") #set($origin = $input.params(\"origin\")) #end\n#if($origin.matches(\".+\")) #set($context.responseOverride.header.Access-Control-Allow-Origin = $origin) #end"
+                    }
+                  }
+                ]
+              },
+              "ResourceId": {
+                "Ref": "ApiGatewayResourcePosts"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayMethodPostsPost": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "POST",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourcePosts"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": false,
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "CreatePostLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            }
+          },
+          "ApiGatewayDeployment1616268731594": {
+            "Type": "AWS::ApiGateway::Deployment",
+            "Properties": {
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "StageName": "dev"
+            },
+            "DependsOn": [
+              "ApiGatewayMethodPostsOptions",
+              "ApiGatewayMethodPostsPost"
+            ]
+          },
+          "CreatePostLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "CreatePostLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
             }
           }
         },
@@ -211,10 +376,33 @@
               "Ref": "ServerlessDeploymentBucket"
             }
           },
-          "HelloLambdaFunctionQualifiedArn": {
+          "CreatePostLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "HelloLambdaVersion1wXbYyMbbeIlpbfwYMT0OxvXP5Yc6UVqd7insDbn9s"
+              "Ref": "CreatePostLambdaVersionL4SzkUgtLqI56R63i4IpsyQl973zRGZ1Iw6H1Q8d4V4"
+            }
+          },
+          "ServiceEndpoint": {
+            "Description": "URL of the service endpoint",
+            "Value": {
+              "Fn::Join": [
+                "",
+                [
+                  "https://",
+                  {
+                    "Ref": "ApiGatewayRestApi"
+                  },
+                  ".execute-api.",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ".",
+                  {
+                    "Ref": "AWS::URLSuffix"
+                  },
+                  "/dev"
+                ]
+              ]
             }
           }
         }
@@ -305,18 +493,45 @@
     },
     "pluginsData": {},
     "functions": {
-      "hello": {
-        "handler": "RoboticistsApis.Apis::RoboticistsApis.Apis.Handler::Hello",
+      "createPost": {
+        "handler": "RoboticistsApis.Apis::RoboticistsApis.Apis.Controllers.PostsController::Post",
         "package": {
           "artifact": "bin/Release/netcoreapp3.1/package.zip"
         },
-        "events": [],
-        "name": "roboticists-apis-dev-hello",
+        "events": [
+          {
+            "http": {
+              "path": "posts",
+              "method": "post",
+              "cors": {
+                "origins": [
+                  "*"
+                ],
+                "origin": "*",
+                "methods": [
+                  "OPTIONS",
+                  "POST"
+                ],
+                "headers": [
+                  "Content-Type",
+                  "X-Amz-Date",
+                  "Authorization",
+                  "X-Api-Key",
+                  "X-Amz-Security-Token",
+                  "X-Amz-User-Agent"
+                ],
+                "allowCredentials": false
+              },
+              "integration": "AWS_PROXY"
+            }
+          }
+        ],
+        "name": "roboticists-apis-dev-createPost",
         "memory": 1024,
         "timeout": 6,
         "runtime": "dotnetcore3.1",
         "vpc": {},
-        "versionLogicalId": "HelloLambdaVersion1wXbYyMbbeIlpbfwYMT0OxvXP5Yc6UVqd7insDbn9s"
+        "versionLogicalId": "CreatePostLambdaVersionL4SzkUgtLqI56R63i4IpsyQl973zRGZ1Iw6H1Q8d4V4"
       }
     },
     "configValidationMode": "warn",
@@ -334,7 +549,7 @@
       },
       "package": {
         "individually": true,
-        "artifactDirectoryName": "serverless/roboticists-apis/dev/1616241646730-2021-03-20T12:00:46.730Z"
+        "artifactDirectoryName": "serverless/roboticists-apis/dev/1616268732829-2021-03-20T19:32:12.829Z"
       },
       "functions": {
         "$ref": "$[\"service\"][\"functions\"]"
@@ -344,7 +559,7 @@
   },
   "package": {
     "individually": true,
-    "artifactDirectoryName": "serverless/roboticists-apis/dev/1616241646730-2021-03-20T12:00:46.730Z",
+    "artifactDirectoryName": "serverless/roboticists-apis/dev/1616268732829-2021-03-20T19:32:12.829Z",
     "artifact": ""
   }
 }

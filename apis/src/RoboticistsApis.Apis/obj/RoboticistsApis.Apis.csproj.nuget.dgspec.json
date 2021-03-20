@@ -45,6 +45,10 @@
               "target": "Package",
               "version": "[3.5.3.8, )"
             },
+            "Amazon.Lambda.APIGatewayEvents": {
+              "target": "Package",
+              "version": "[2.4.0, )"
+            },
             "Amazon.Lambda.Core": {
               "target": "Package",
               "version": "[1.2.0, )"
@@ -52,6 +56,14 @@
             "Amazon.Lambda.Serialization.SystemTextJson": {
               "target": "Package",
               "version": "[2.1.0, )"
+            },
+            "Amazon.Lambda.TestUtilities": {
+              "target": "Package",
+              "version": "[1.2.0, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[12.0.3, )"
             }
           },
           "imports": [
