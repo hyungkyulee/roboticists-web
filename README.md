@@ -1,25 +1,44 @@
 # roboticists-web
 
-roboticists
- - roboticists-web
-   - 
- - roboticists-apis
-   - RobiticistsApis.sln
-   - src
-     - RoboticistsApis.Apis
-       - Controllers
+## a project structure
+ - web
+   - .git
+   - webapp (reactjs frontend app)
+   - apis (c#/.net backend apis)
+     - RobiticistsApis.sln
+     - go.sh (script to build and deploy)
+     - src
+       - RoboticistsApis.Apis
+         - Controllers
 
 
  * RoboticistsApis.sln : update project path properly after restructuring the folders
  ```c#
  Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoboticistsApis.Apis", "src\RoboticistsApis.Apis\RoboticistsApis.Apis.csproj", "{6982ECC3-0F36-47CB-AEC3-234C46CFAF3E}"
  ```
+ * main Project specify the assemblyName, packageId and namespace 
+ ```c#
+ <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <AssemblyName>RoboticistsApis.Apis</AssemblyName>
+    <PackageId>RoboticistsApis.Apis</PackageId>
+    <RootNamespace>RoboticistsApis.Apis</RootNamespace>
+  </PropertyGroup>
+ ```
 
+## frontend app
+```bash
+$ cd webapp 
+$ npx create-react-app ./
+$ npm i
+$ npm start
+```
 
 ## serverless (c# on AWS)
 reference : https://www.serverless.com/framework/docs/providers/aws/examples/hello-world/csharp/#hello-world-c-example 
 
-### install serverless and nuget packages
+### install serverless framework create lambda projec with c# template
 ``` bash
 (base) ➜  src $ npm install -g serverless
 (base) ➜  src $ cd RoboticcistsApis.Apis
@@ -37,6 +56,26 @@ Serverless: Successfully generated boilerplate for template: "aws-csharp"
 Serverless: NOTE: Please update the "service" property in serverless.yml with your service name
 ```
 
+### make a script to build and deploy
+```bash
+#!/bin/bash
+
+#install zip on debian OS, since microsoft/dotnet container doesn't have zip by default
+if [ -f /etc/debian_version ]
+then
+  apt -qq update
+  apt -qq -y install zip
+fi
+
+pushd src/RoboticistsApis.Apis/
+dotnet restore
+dotnet tool install -g Amazon.Lambda.Tools --framework netcoreapp3.1
+dotnet lambda package --configuration Release --framework netcoreapp3.1 --output-package bin/Release/netcoreapp3.1/package.zip
+sls deploy
+popd
+```
+
+### 
 Install Nuget Packages
 - AWSSDK.Core
 - Amazon.Lambda.Core
