@@ -166,7 +166,7 @@ namespace RoboticistsApis.Apis.Controllers
           : HttpStatusCode.InternalServerError;
 
       // await with repository
-      var body = JsonConvert.SerializeObject(proxyRequest);
+      var body = JsonConvert.SerializeObject(proxyRequest.Body);
 
       var response = new APIGatewayProxyResponse()
       {
@@ -182,3 +182,17 @@ namespace RoboticistsApis.Apis.Controllers
       return response;
   }
   ```
+  
+- Build and Test
+  - ./go.sh
+  - test with postman 
+    - endpoint: https://u3fnac9d51.execute-api.eu-west-1.amazonaws.com/dev/posts
+    - method: POST
+    - no-auth
+    - body : raw - json
+      {
+        "title": "Test Title",
+        "content": "Pilot Content ",
+        "category": "diary"
+      }
+
