@@ -41,7 +41,22 @@ Install Nuget Packages
 - AWSSDK.Core
 - Amazon.Lambda.Core
 - Amazon.Lambda.Serialization.SystemTextJson
-- 
+
+AWS Lambda는 C# 함수를 위한 다음 라이브러리를 제공합니다.
+
+Amazon.Lambda.Core – 이 라이브러리는 정적 Lambda 로거, 직렬화 인터페이스 및 콘텍스트 객체를 제공합니다. Context 객체(AWS Lambda 컨텍스트 객체(C#))는 Lambda 함수에 대한 런타임 정보를 제공합니다.
+Amazon.Lambda.Serialization.Json – Amazon.Lambda.Core에 직렬화 인터페이스를 구현한 것입니다.
+Amazon.Lambda.Logging.AspNetCore – ASP.NET에서의 로깅을 위해 라이브러리를 제공합니다.
+몇 가지 AWS 서비스를 위한 이벤트 객체(POCO)로는 다음과 같은 것들이 있습니다.
+Amazon.Lambda.APIGatewayEvents
+Amazon.Lambda.CognitoEvents
+Amazon.Lambda.ConfigEvents
+Amazon.Lambda.DynamoDBEvents
+Amazon.Lambda.KinesisEvents
+Amazon.Lambda.S3Events
+Amazon.Lambda.SQSEvents
+Amazon.Lambda.SNSEvents
+
 
 ### build the folder structure
 ```bash
