@@ -1,25 +1,44 @@
 # roboticists-web
 
-roboticists
- - roboticists-web
-   - 
- - roboticists-apis
-   - RobiticistsApis.sln
-   - src
-     - RoboticistsApis.Apis
-       - Controllers
+## a project structure
+ - web
+   - .git
+   - webapp (reactjs frontend app)
+   - apis (c#/.net backend apis)
+     - RobiticistsApis.sln
+     - go.sh (script to build and deploy)
+     - src
+       - RoboticistsApis.Apis
+         - Controllers
 
 
  * RoboticistsApis.sln : update project path properly after restructuring the folders
  ```c#
  Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoboticistsApis.Apis", "src\RoboticistsApis.Apis\RoboticistsApis.Apis.csproj", "{6982ECC3-0F36-47CB-AEC3-234C46CFAF3E}"
  ```
+ * main Project specify the assemblyName, packageId and namespace 
+ ```c#
+ <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <AssemblyName>RoboticistsApis.Apis</AssemblyName>
+    <PackageId>RoboticistsApis.Apis</PackageId>
+    <RootNamespace>RoboticistsApis.Apis</RootNamespace>
+  </PropertyGroup>
+ ```
 
+## frontend app
+```bash
+$ cd webapp 
+$ npx create-react-app ./
+$ npm i
+$ npm start
+```
 
 ## serverless (c# on AWS)
 reference : https://www.serverless.com/framework/docs/providers/aws/examples/hello-world/csharp/#hello-world-c-example 
 
-### install serverless and nuget packages
+### install serverless framework create lambda projec with c# template
 ``` bash
 (base) ➜  src $ npm install -g serverless
 (base) ➜  src $ cd RoboticcistsApis.Apis
@@ -37,6 +56,30 @@ Serverless: Successfully generated boilerplate for template: "aws-csharp"
 Serverless: NOTE: Please update the "service" property in serverless.yml with your service name
 ```
 
+### make a script to build and deploy
+```bash
+#!/bin/bash
+
+#install zip on debian OS, since microsoft/dotnet container doesn't have zip by default
+if [ -f /etc/debian_version ]
+then
+  apt -qq update
+  apt -qq -y install zip
+fi
+
+pushd src/RoboticistsApis.Apis/
+dotnet restore
+dotnet tool install -g Amazon.Lambda.Tools --framework netcoreapp3.1
+dotnet lambda package --configuration Release --framework netcoreapp3.1 --output-package bin/Release/netcoreapp3.1/package.zip
+sls deploy
+popd
+```
+
+```bash
+./go.sh
+```
+
+### Nuget Package for c#/.net examples on AWS (optional because build will install the package by cli)
 Install Nuget Packages
 - AWSSDK.Core
 - Amazon.Lambda.Core
@@ -58,9 +101,98 @@ Amazon.Lambda.SQSEvents
 Amazon.Lambda.SNSEvents
 
 
-### build the folder structure
-```bash
+## REST apis
+### Post
+#### update serverless yml function to create API gateway and lambda
+```yml
+functions:
+  createPost:
+    handler: RoboticistsApis.Apis::RoboticistsApis.Apis.Controllers.PostsController::Post
+    package:
+      artifact: bin/Release/netcoreapp3.1/package.zip
+    events:
+      - http:
+          path: posts
+          method: post
+          cors: true
+```
+* handler path - handler: [assembly name]::[project name].[subfolder name].[file name]::[function name]
 
+#### create file and class signature
+file structure
+```
+- src
+  - RoboticistsApis.Apis
+    - Controllers
+      - PostsController.cs
 ```
 
+Set the namespace of the Controller file
+- the namesapce should be a concatenation of [project name].[subfolder name]
+- class name and constructor updated with the filename
+```c#
+[assembly:LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer))]
+namespace RoboticistsApis.Apis.Controllers
+{
+    public class PostsController
+    {
+        public PostsController()
+        {
+        }
+    }
+}
+```
+
+#### create async handler function for REST Api
+(* ref: https://aws.amazon.com/blogs/compute/developing-net-core-aws-lambda-functions/)
+- prerequisite : install NuGet
+  ```c#
+  using Amazon.Lambda.Core;
+  using Amazon.Lambda.TestUtilities;
+  using Amazon.Lambda.APIGatewayEvents;
+  
+  using Newtonsoft.Json;
+  ```
+  
+- handler signature
+  ```c#public async Task<APIGatewayProxyResponse> Post(APIGatewayProxyRequest proxyRequest)```
+  
+- APIGatewayProxyResponse/Request
+  ```c#
+  public async Task<APIGatewayProxyResponse> Post(APIGatewayProxyRequest proxyRequest)
+  {
+      var statusCode = (proxyRequest != null)
+          ? HttpStatusCode.OK
+          : HttpStatusCode.InternalServerError;
+
+      // await with repository
+      var body = JsonConvert.SerializeObject(proxyRequest.Body);
+
+      var response = new APIGatewayProxyResponse()
+      {
+          StatusCode = (int)statusCode,
+          Body = body,
+          Headers = new Dictionary<string, string>
+          {
+              {"Content-Type", "application/json"},
+              {"Access-Control-Allow-Origin", "*"}
+          }
+      };
+
+      return response;
+  }
+  ```
+  
+- Build and Test
+  - ./go.sh
+  - test with postman 
+    - endpoint: https://u3fnac9d51.execute-api.eu-west-1.amazonaws.com/dev/posts
+    - method: POST
+    - no-auth
+    - body : raw - json
+      {
+        "title": "Test Title",
+        "content": "Pilot Content ",
+        "category": "diary"
+      }
 
