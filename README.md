@@ -239,4 +239,16 @@ namespace RoboticistsApis.Infrastructure
  * tupple used to handle the multiple returns at the same time.
 
 
- 
+#### Models
+- Api : arrange a request and a response to REST API
+- Domain : handle a repository resource
+
+```c#
+public class CreatePostRequest
+{
+    public string Title { get; set; }
+    public string Content { get; set; }
+    public string Category { get; set; }
+}
+```
+
