@@ -196,3 +196,47 @@ namespace RoboticistsApis.Apis.Controllers
         "category": "diary"
       }
 
+
+#### Json operators
+- Json serializer and deserializer Tool
+- make it an 'extension method'
+
+```c#
+namespace RoboticistsApis.Infrastructure
+{
+    public static class JsonExtensions
+    {
+        public static (T entity, Exception error) Deserialize<T>(this string payload)
+        {
+            if (string.IsNullOrEmpty(payload))
+            {
+                return (default, new Exception("A payload cannot be empty"));
+            }
+
+            var entity = JsonSerializer.Deserialize<T>(payload, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+            
+            Console.WriteLine(entity.ToJson());
+
+            return (entity, null);
+        }
+
+        public static string ToJson(this object entity)
+        {
+            return JsonSerializer.Serialize(entity, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+        }
+    }
+}
+```
+ * extension mehod:'this' keyword, should be a static class and method
+ * import System.Text.Json to use JsonSerializer library
+ * to match c# annotation with the json body, set JsonNamingPolicy.CamelCase
+ * tupple used to handle the multiple returns at the same time.
+
+
+ 
