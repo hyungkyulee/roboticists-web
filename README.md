@@ -1,6 +1,8 @@
 # roboticists-web
+---
 
 ## a project structure
+---
  - web
    - .git
    - webapp (reactjs frontend app)
@@ -12,11 +14,12 @@
          - Controllers
 
 
- * RoboticistsApis.sln : update project path properly after restructuring the folders
+> RoboticistsApis.sln : update project path properly after restructuring the folders
  ```c#
  Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoboticistsApis.Apis", "src\RoboticistsApis.Apis\RoboticistsApis.Apis.csproj", "{6982ECC3-0F36-47CB-AEC3-234C46CFAF3E}"
  ```
- * main Project specify the assemblyName, packageId and namespace 
+ 
+ > main Project specify the assemblyName, packageId and namespace 
  ```c#
  <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -28,6 +31,7 @@
  ```
 
 ## frontend app
+---
 ```bash
 $ cd webapp 
 $ npx create-react-app ./
@@ -37,6 +41,7 @@ $ npm start
 
 ## serverless (c# on AWS)
 reference : https://www.serverless.com/framework/docs/providers/aws/examples/hello-world/csharp/#hello-world-c-example 
+---
 
 ### install serverless framework create lambda projec with c# template
 ``` bash
@@ -101,8 +106,10 @@ Amazon.Lambda.SQSEvents
 Amazon.Lambda.SNSEvents
 
 
-## REST apis
-### Post
+## APIs (RESTful)
+---
+### POST (basic without auth/repository connection)
+---
 #### update serverless yml function to create API gateway and lambda
 ```yml
 functions:
@@ -116,7 +123,7 @@ functions:
           method: post
           cors: true
 ```
-* handler path - handler: [assembly name]::[project name].[subfolder name].[file name]::[function name]
+> handler path - handler: [assembly name]::[project name].[subfolder name].[file name]::[function name]
 
 #### create file and class signature
 file structure
@@ -233,11 +240,10 @@ namespace RoboticistsApis.Infrastructure
     }
 }
 ```
- * extension mehod:'this' keyword, should be a static class and method
- * import System.Text.Json to use JsonSerializer library
- * to match c# annotation with the json body, set JsonNamingPolicy.CamelCase
- * tupple used to handle the multiple returns at the same time.
-
+> extension mehod:'this' keyword, should be a static class and method
+> import System.Text.Json to use JsonSerializer library
+> to match c# annotation with the json body, set JsonNamingPolicy.CamelCase
+> tupple used to handle the multiple returns at the same time.
 
 #### Models
 - Api : arrange a request and a response to REST API
@@ -252,3 +258,47 @@ public class CreatePostRequest
 }
 ```
 
+### POST (connected with repository service)
+---
+#### Domain Object Model
+Controller <-> Repository <-> Context (e.g. database, memory, etc) 
+Repository is in charge of handling a domain object for Controller (Requests/Responses)
+```c#
+public class BlogPost
+{
+    public PostId Id { get; }
+    public string Category { get; }
+    public string Title { get; }
+    public string Content { get; }
+
+    public BlogPost(PostId id, 
+        string category, 
+        string title, 
+        string content)
+    {
+        Id = id;
+        Category = category;
+        Title = title;
+        Content = content;
+    }
+
+    public static (BlogPost post, ArgumentException error) Create(PostId id, 
+        string category, 
+        string title, 
+        string content)
+    {
+        var errorMessage = string.Empty;
+        if (id.Value == Guid.Empty) errorMessage += $"{nameof(id)}";
+        if (string.IsNullOrEmpty(category)) errorMessage += $"{nameof(category)}";
+        if (string.IsNullOrEmpty(title)) errorMessage += $"{nameof(category)}";
+        if (string.IsNullOrEmpty(content)) errorMessage += $"{nameof(category)}";
+
+        if (!string.IsNullOrEmpty(errorMessage))
+        {
+            return (null, new ArgumentException($"Key data: ${errorMessage}, cannot be empty."));
+        }
+
+        return (new BlogPost(id, category, title, content), null);
+    }
+}
+```
