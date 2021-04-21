@@ -2,6 +2,12 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoboticistsApis.Apis", "src\RoboticistsApis.Apis\RoboticistsApis.Apis.csproj", "{6982ECC3-0F36-47CB-AEC3-234C46CFAF3E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoboticistsApis.Infrastructure", "src\RoboticistsApis.Infrastructure\RoboticistsApis.Infrastructure.csproj", "{C7F1A22B-C089-4E91-B0CB-BEE79863AED4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoboticistsApis.Models", "src\RoboticistsApis.Models\RoboticistsApis.Models.csproj", "{168CF1C5-BF00-4D21-AE3C-6013DE3D585A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoboticistsApis.Services", "src\RoboticistsApis.Services\RoboticistsApis.Services.csproj", "{8BCABE78-E939-4466-9798-993CBAED5C17}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +18,17 @@ Global
 		{6982ECC3-0F36-47CB-AEC3-234C46CFAF3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6982ECC3-0F36-47CB-AEC3-234C46CFAF3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6982ECC3-0F36-47CB-AEC3-234C46CFAF3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7F1A22B-C089-4E91-B0CB-BEE79863AED4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7F1A22B-C089-4E91-B0CB-BEE79863AED4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7F1A22B-C089-4E91-B0CB-BEE79863AED4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7F1A22B-C089-4E91-B0CB-BEE79863AED4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{168CF1C5-BF00-4D21-AE3C-6013DE3D585A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{168CF1C5-BF00-4D21-AE3C-6013DE3D585A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{168CF1C5-BF00-4D21-AE3C-6013DE3D585A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{168CF1C5-BF00-4D21-AE3C-6013DE3D585A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BCABE78-E939-4466-9798-993CBAED5C17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BCABE78-E939-4466-9798-993CBAED5C17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BCABE78-E939-4466-9798-993CBAED5C17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BCABE78-E939-4466-9798-993CBAED5C17}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

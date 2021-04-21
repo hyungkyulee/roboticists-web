@@ -161,7 +161,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/roboticists-apis/dev/1616268732829-2021-03-20T19:32:12.829Z/package.zip"
+          "S3Key": "serverless/roboticists-apis/dev/1618964454929-2021-04-21T00:20:54.929Z/package.zip"
         },
         "Handler": "RoboticistsApis.Apis::RoboticistsApis.Apis.Controllers.PostsController::Post",
         "Runtime": "dotnetcore3.1",
@@ -179,14 +179,14 @@
         "CreatePostLogGroup"
       ]
     },
-    "CreatePostLambdaVersionL4SzkUgtLqI56R63i4IpsyQl973zRGZ1Iw6H1Q8d4V4": {
+    "CreatePostLambdaVersionGPMXiqD7mjBNLHYPQf9IKQGYP6XYhi1CSkozEbn4Ss": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "CreatePostLambdaFunction"
         },
-        "CodeSha256": "/uL2QGw2ZCq42R5KxjY27SdMtfcZAUCBoOdiFoNrdaw="
+        "CodeSha256": "Jc56jR5SeQ3cXtCdmV6YRSuxksKj2ynMecBmC5Z9XG4="
       }
     },
     "ApiGatewayRestApi": {
@@ -304,7 +304,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1616268731594": {
+    "ApiGatewayDeployment1618964453571": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -353,6 +353,58 @@
           ]
         }
       }
+    },
+    "blogPostsTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "TableName": "BlogPosts",
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "category",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "blogId",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "dateTimestamp",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "category",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "blogId",
+            "KeyType": "RANGE"
+          }
+        ],
+        "LocalSecondaryIndexes": [
+          {
+            "IndexName": "dateTimestampLsi",
+            "KeySchema": [
+              {
+                "AttributeName": "category",
+                "KeyType": "HASH"
+              },
+              {
+                "AttributeName": "dateTimestamp",
+                "KeyType": "RANGE"
+              }
+            ],
+            "Projection": {
+              "ProjectionType": "ALL"
+            }
+          }
+        ],
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 3,
+          "WriteCapacityUnits": 2
+        }
+      }
     }
   },
   "Outputs": {
@@ -364,7 +416,7 @@
     "CreatePostLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "CreatePostLambdaVersionL4SzkUgtLqI56R63i4IpsyQl973zRGZ1Iw6H1Q8d4V4"
+        "Ref": "CreatePostLambdaVersionGPMXiqD7mjBNLHYPQf9IKQGYP6XYhi1CSkozEbn4Ss"
       }
     },
     "ServiceEndpoint": {

@@ -22,3 +22,10 @@
 /Users/albert/_proj/roboticists/web/apis/src/RoboticistsApis.Apis/obj/Release/netcoreapp3.1/linux-x64/RoboticistsApis.Apis.dll
 /Users/albert/_proj/roboticists/web/apis/src/RoboticistsApis.Apis/obj/Release/netcoreapp3.1/linux-x64/RoboticistsApis.Apis.pdb
 /Users/albert/_proj/roboticists/web/apis/src/RoboticistsApis.Apis/obj/Release/netcoreapp3.1/linux-x64/RoboticistsApis.Apis.genruntimeconfig.cache
+/Users/albert/_proj/roboticists/web/apis/src/RoboticistsApis.Apis/bin/Release/netcoreapp3.1/linux-x64/RoboticistsApis.Infrastructure.dll
+/Users/albert/_proj/roboticists/web/apis/src/RoboticistsApis.Apis/bin/Release/netcoreapp3.1/linux-x64/RoboticistsApis.Models.dll
+/Users/albert/_proj/roboticists/web/apis/src/RoboticistsApis.Apis/bin/Release/netcoreapp3.1/linux-x64/RoboticistsApis.Services.dll
+/Users/albert/_proj/roboticists/web/apis/src/RoboticistsApis.Apis/bin/Release/netcoreapp3.1/linux-x64/RoboticistsApis.Infrastructure.pdb
+/Users/albert/_proj/roboticists/web/apis/src/RoboticistsApis.Apis/bin/Release/netcoreapp3.1/linux-x64/RoboticistsApis.Models.pdb
+/Users/albert/_proj/roboticists/web/apis/src/RoboticistsApis.Apis/bin/Release/netcoreapp3.1/linux-x64/RoboticistsApis.Services.pdb
+/Users/albert/_proj/roboticists/web/apis/src/RoboticistsApis.Apis/obj/Release/netcoreapp3.1/linux-x64/RoboticistsApis.Apis.csproj.CopyComplete

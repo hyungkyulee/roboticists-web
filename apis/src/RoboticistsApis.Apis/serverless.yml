@@ -125,3 +125,34 @@ functions:
 #     NewOutput:
 #       Description: "Description for the output"
 #       Value: "Some output value"
+
+resources:
+  Resources:
+    blogPostsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: BlogPosts
+        AttributeDefinitions:
+          - AttributeName: category
+            AttributeType: S
+          - AttributeName: blogId
+            AttributeType: S
+          - AttributeName: dateTimestamp
+            AttributeType: S
+        KeySchema:
+          - AttributeName: category
+            KeyType: HASH
+          - AttributeName: blogId
+            KeyType: RANGE
+        LocalSecondaryIndexes:
+          - IndexName: dateTimestampLsi
+            KeySchema:
+              - AttributeName: category
+                KeyType: HASH
+              - AttributeName: dateTimestamp
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 3
+          WriteCapacityUnits: 2
