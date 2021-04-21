@@ -489,6 +489,21 @@ public class PostRepository : IPostRepository
 ```
 
 ---
+### GET
+---
+
+```yml
+  listCategoryPosts:
+    handler: RoboticistsApis.Apis::RoboticistsApis.Apis.Controllers.PostsController::List
+    package:
+      artifact: bin/Release/netcoreapp3.1/package.zip
+    events:
+      - http:
+          path: categoryposts/{category}
+          method: get
+```
+
+---
 ### POST (with Authentication)
 ---
 #### AWS Credential configuraiton
