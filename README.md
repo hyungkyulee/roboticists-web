@@ -1,4 +1,4 @@
-# roboticists-web
+# WEBAPP-API Project
 ---
 
 ## a project structure
@@ -328,8 +328,18 @@ file structure
     - Repositories
       - PostRepository.cs
 ```
+> appsettings including an aws credential should ingnore in git. 
+> Alarm message example from AWS when it opens to the public : 
+  ```text
+  Hi there,
+  We are following-up regarding re-securing your account.
+  As previously communicated, we have detected an abnormal pattern in your AWS account that matches unauthorized activity. 
+  Your security is important to us and this exposure of your account’s IAM credentials poses a security risk to your AWS account, could lead to excessive charges from unauthorized activity, and violates the AWS Customer Agreement or other agreement with us governing your use of our Services.
+  To re-secure your account, please follow the below steps and then respond to this notification within five days. 
+  ```
 
 #### Dependency Injection of services
+A dependency is an object that another object depends on. Startup class with Services collections that other classes (e.g. repository) depend on.
 
 ```c#
 public static class Startup
@@ -360,6 +370,65 @@ public static class Startup
         return Services;
     }
 
+}
+```
+
+Let's look at the updated PostsController implementing the constructor to invoke Startup class's 'Build' method which adds and links related services such as AWS Credential, DynamoDBClient, instance of Repository Interface.
+> DynamoDBClient is requiring a AWS Credential configuration. If it's not binded correctly, error shows as follows :
+> The security token included in the request is invalid.: AmazonDynamoDBException
+   at Amazon.Runtime.Internal.HttpErrorResponseExceptionHandler.HandleExceptionStream(IRequestContext requestContext, IWebResponseData httpErrorResponse, HttpErrorResponseException exception, Stream responseStream)
+   at Amazon.Runtime.Internal.HttpErrorResponseExceptionHandler.HandleExceptionAsync(IExecutionContext executionContext, HttpErrorResponseException exception)
+   
+```c#
+public class PostsController
+{
+    private readonly IPostRepository _postRepository;
+
+    public PostsController()
+    {
+        var services = Startup.Build();
+        _postRepository = services.GetService<IPostRepository>();
+    }
+
+    public async Task<APIGatewayProxyResponse> Post(APIGatewayProxyRequest proxyRequest)
+    {
+        var statusCode = (proxyRequest != null)
+            ? HttpStatusCode.OK
+            : HttpStatusCode.BadRequest;
+
+        var (request, requestError) = proxyRequest.Body.Deserialize<CreatePostRequest>();
+        if (requestError != null)
+        {
+            statusCode = HttpStatusCode.BadRequest;
+        }
+
+        var (post, postError) = BlogPost.Create(new PostId(Guid.NewGuid()),
+            request.Category,
+            request.Title,
+            request.Content);
+        if (postError != null)
+        {
+            statusCode = HttpStatusCode.BadRequest;
+        }
+
+        var (result, message) = await _postRepository.Save(post);
+
+        // var body = JsonConvert.SerializeObject(proxyRequest.Body);
+
+        var response = new APIGatewayProxyResponse()
+        {
+            StatusCode = (int)result,
+            Headers = new Dictionary<string, string>
+            {
+                {"Access-Control-Allow-Origin", "*"},
+                {"Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accepted"},
+                {"Content-Type", "application/json"}
+            },
+            Body = message.ToJson()
+        };
+
+        return response;
+    }
 }
 ```
 
