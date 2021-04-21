@@ -258,37 +258,35 @@ public class CreatePostRequest
 }
 ```
 
-### POST (connected with repository service)
----
-#### Domain Object Model
-Controller <-> Repository <-> Context (e.g. database, memory, etc) 
-Repository is in charge of handling a domain object for Controller (Requests/Responses)
 ```c#
 public class BlogPost
 {
-    public PostId Id { get; }
+    public PostId BlogId { get; }
     public string Category { get; }
     public string Title { get; }
     public string Content { get; }
+    public DateTime DateTimestamp { get; }
 
-    public BlogPost(PostId id, 
+    public BlogPost(PostId blogBlogId, 
         string category, 
         string title, 
-        string content)
+        string content,
+        DateTime dateTimestamp)
     {
-        Id = id;
+        BlogId = blogBlogId;
         Category = category;
         Title = title;
         Content = content;
+        DateTimestamp = dateTimestamp;
     }
 
-    public static (BlogPost post, ArgumentException error) Create(PostId id, 
+    public static (BlogPost post, ArgumentException error) Create(PostId blogId, 
         string category, 
         string title, 
         string content)
     {
         var errorMessage = string.Empty;
-        if (id.Value == Guid.Empty) errorMessage += $"{nameof(id)}";
+        if (blogId.Value == Guid.Empty) errorMessage += $"{nameof(blogId)}";
         if (string.IsNullOrEmpty(category)) errorMessage += $"{nameof(category)}";
         if (string.IsNullOrEmpty(title)) errorMessage += $"{nameof(category)}";
         if (string.IsNullOrEmpty(content)) errorMessage += $"{nameof(category)}";
@@ -298,7 +296,149 @@ public class BlogPost
             return (null, new ArgumentException($"Key data: ${errorMessage}, cannot be empty."));
         }
 
-        return (new BlogPost(id, category, title, content), null);
+        return (new BlogPost(blogId, category, title, content, DateTime.Now), null);
     }
 }
+```
+
+---
+### POST (connected with repository service)
+---
+file structure
+```
+- src
+  - RoboticistsApis.Apis
+    Startup.cs
+    appsettings.json
+    - Controllers
+      - PostsController.cs
+  - RoboticistsApis.Models
+    - Api
+      - CreatePostRequest.cs
+    - Constants
+      - DatabaseKey.cs
+      - DatabaseTables.cs
+    - Contract
+      - IPostRepository.cs
+    - Domain
+      - BlogPost.cs
+    - Options
+      - AwsOptions.cs
+  - RoboticistsApis.Services
+    - Repositories
+      - PostRepository.cs
+```
+
+#### Dependency Injection of services
+
+```c#
+public static class Startup
+{
+    private static IConfiguration _configuration;
+    private static readonly IServiceCollection Services = new ServiceCollection();
+
+    public static IServiceProvider Build()
+    {
+        return ConfigureServices().BuildServiceProvider();
+    }
+
+    private static IServiceCollection ConfigureServices()
+    {
+        var configBuilder = new ConfigurationBuilder();
+        configBuilder.AddEnvironmentVariables();
+        configBuilder.AddJsonFile("appsettings.json", false, true);
+        _configuration = configBuilder.Build();
+
+        var awsOptions = new AwsOptions();
+        _configuration.GetSection("aws").Bind(awsOptions);
+
+        Services.AddSingleton<AWSCredentials>(x =>
+            new BasicAWSCredentials(awsOptions.AccessKey, awsOptions.SecretKey));
+        Services.AddSingleton<IAmazonDynamoDB, AmazonDynamoDBClient>();
+        Services.AddSingleton<IPostRepository, PostRepository>();
+
+        return Services;
+    }
+
+}
+```
+
+#### Role of repository
+Controller <-> Repository <-> Context (e.g. database, memory, etc) 
+Repository is in charge of handling a domain object for Controller (Requests/Responses)
+```c#
+public interface IPostRepository
+{
+    Task<(HttpStatusCode result, string message)> Save(BlogPost blogPost);
+}
+```
+
+```c#
+public class PostRepository : IPostRepository
+{
+    private readonly IAmazonDynamoDB _dynamoDb;
+
+    public PostRepository(IAmazonDynamoDB dynamoDb)
+    {
+        _dynamoDb = dynamoDb;
+    }
+
+    public async Task<(HttpStatusCode result, string message)> Save(BlogPost blogPost)
+    {
+        var key = new Dictionary<string, AttributeValue>
+        {
+            {
+                DatabaseKey.Category, 
+                new AttributeValue{S = blogPost.Category}
+            },
+            {
+                DatabaseKey.BlogId, 
+                new AttributeValue{S = blogPost.BlogId.ToString()}
+            }
+        };
+
+        var updatedValues = new Dictionary<string, AttributeValueUpdate>
+        {
+            {
+                DatabaseKey.Title, 
+                new AttributeValueUpdate{Action = AttributeAction.PUT, Value = new AttributeValue{S = blogPost.Title}}
+            },
+            {
+                DatabaseKey.Content, 
+                new AttributeValueUpdate{Action = AttributeAction.PUT, Value = new AttributeValue{S = blogPost.Content}}
+            },
+            {
+                DatabaseKey.DateTimestamp, 
+                new AttributeValueUpdate{Action = AttributeAction.PUT, Value = new AttributeValue{S = blogPost.DateTimestamp.ToString("u")}}
+            }
+        };
+
+        await _dynamoDb.UpdateItemAsync(DatabaseTables.BlogPosts, key, updatedValues);
+        return (HttpStatusCode.Created, "Success - A new post has been created.");
+    }
+}
+```
+
+---
+### POST (with Authentication)
+---
+#### AWS Credential configuraiton
+- create setting file 'appsettings.json' on the same location as Main service configuration file (e.g. Startup.cs)
+```json
+{
+  "aws": {
+    "accessKey": "AKIA*********",
+    "secretKey": "X3OYi/5uRAHQR3ur**************"
+  }
+}
+```
+- declare the appsettings.json path on project setting (.csproj)
+```c#
+:
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+:
 ```
