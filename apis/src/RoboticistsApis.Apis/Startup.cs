@@ -35,6 +35,7 @@ namespace RoboticistsApis.Apis
             Services.AddSingleton<IPostRepository, PostRepository>();
             
             return Services;
+            
         }
     }
 }
