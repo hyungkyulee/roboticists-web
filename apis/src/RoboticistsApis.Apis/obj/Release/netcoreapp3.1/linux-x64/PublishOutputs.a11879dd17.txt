@@ -1,3 +1,4 @@
+/Users/albert/_proj/roboticists/web/apis/src/RoboticistsApis.Apis/bin/Release/netcoreapp3.1/publish/appsettings.json
 /Users/albert/_proj/roboticists/web/apis/src/RoboticistsApis.Apis/bin/Release/netcoreapp3.1/publish/RoboticistsApis.Apis.dll
 /Users/albert/_proj/roboticists/web/apis/src/RoboticistsApis.Apis/bin/Release/netcoreapp3.1/publish/RoboticistsApis.Apis.deps.json
 /Users/albert/_proj/roboticists/web/apis/src/RoboticistsApis.Apis/bin/Release/netcoreapp3.1/publish/RoboticistsApis.Apis.runtimeconfig.json

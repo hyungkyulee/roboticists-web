@@ -27,6 +27,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  
+  <ItemGroup>
     <ProjectReference Include="..\RoboticistsApis.Infrastructure\RoboticistsApis.Infrastructure.csproj" />
     <ProjectReference Include="..\RoboticistsApis.Models\RoboticistsApis.Models.csproj" />
     <ProjectReference Include="..\RoboticistsApis.Services\RoboticistsApis.Services.csproj" />

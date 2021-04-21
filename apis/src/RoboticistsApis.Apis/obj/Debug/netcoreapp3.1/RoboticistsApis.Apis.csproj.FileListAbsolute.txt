@@ -29,3 +29,4 @@
 /Users/albert/_proj/roboticists/web/apis/src/RoboticistsApis.Apis/obj/Debug/netcoreapp3.1/RoboticistsApis.Apis.csproj.CopyComplete
 /Users/albert/_proj/roboticists/web/apis/src/RoboticistsApis.Apis/bin/Debug/netcoreapp3.1/RoboticistsApis.Services.dll
 /Users/albert/_proj/roboticists/web/apis/src/RoboticistsApis.Apis/bin/Debug/netcoreapp3.1/RoboticistsApis.Services.pdb
+/Users/albert/_proj/roboticists/web/apis/src/RoboticistsApis.Apis/bin/Debug/netcoreapp3.1/appsettings.json

@@ -29,3 +29,4 @@
 /Users/albert/_proj/roboticists/web/apis/src/RoboticistsApis.Apis/bin/Release/netcoreapp3.1/linux-x64/RoboticistsApis.Models.pdb
 /Users/albert/_proj/roboticists/web/apis/src/RoboticistsApis.Apis/bin/Release/netcoreapp3.1/linux-x64/RoboticistsApis.Services.pdb
 /Users/albert/_proj/roboticists/web/apis/src/RoboticistsApis.Apis/obj/Release/netcoreapp3.1/linux-x64/RoboticistsApis.Apis.csproj.CopyComplete
+/Users/albert/_proj/roboticists/web/apis/src/RoboticistsApis.Apis/bin/Release/netcoreapp3.1/linux-x64/appsettings.json

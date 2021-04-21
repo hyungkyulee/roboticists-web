@@ -23,6 +23,10 @@ namespace RoboticistsApis.Services.Repositories
             var key = new Dictionary<string, AttributeValue>
             {
                 {
+                    DatabaseKey.Category, 
+                    new AttributeValue{S = blogPost.Category}
+                },
+                {
                     DatabaseKey.BlogId, 
                     new AttributeValue{S = blogPost.BlogId.ToString()}
                 }
@@ -30,10 +34,6 @@ namespace RoboticistsApis.Services.Repositories
             
             var updatedValues = new Dictionary<string, AttributeValueUpdate>
             {
-                {
-                    DatabaseKey.Category, 
-                    new AttributeValueUpdate{Action = AttributeAction.PUT, Value = new AttributeValue{S = blogPost.Category}}
-                },
                 {
                     DatabaseKey.Title, 
                     new AttributeValueUpdate{Action = AttributeAction.PUT, Value = new AttributeValue{S = blogPost.Title}}
