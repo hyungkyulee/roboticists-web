@@ -51,8 +51,6 @@ namespace RoboticistsApis.Apis.Controllers
 
             var (result, message) = await _postRepository.Save(post);
             
-            // var body = JsonConvert.SerializeObject(proxyRequest.Body);
-            
             var response = new APIGatewayProxyResponse()
             {
                 StatusCode = (int)result,
@@ -66,6 +64,11 @@ namespace RoboticistsApis.Apis.Controllers
             };
 
             return response;
+        }
+
+        public HttpStatusCode List(APIGatewayProxyRequest proxyRequest)
+        {
+            return HttpStatusCode.OK;
         }
     }
 }

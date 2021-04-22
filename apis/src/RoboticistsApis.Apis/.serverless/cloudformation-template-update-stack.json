@@ -77,6 +77,12 @@
         "LogGroupName": "/aws/lambda/roboticists-apis-dev-createPost"
       }
     },
+    "ListCategoryPostsLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/roboticists-apis-dev-listCategoryPosts"
+      }
+    },
     "IamRoleLambdaExecution": {
       "Type": "AWS::IAM::Role",
       "Properties": {
@@ -161,7 +167,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/roboticists-apis/dev/1618966820995-2021-04-21T01:00:20.995Z/package.zip"
+          "S3Key": "serverless/roboticists-apis/dev/1619133934278-2021-04-22T23:25:34.278Z/package.zip"
         },
         "Handler": "RoboticistsApis.Apis::RoboticistsApis.Apis.Controllers.PostsController::Post",
         "Runtime": "dotnetcore3.1",
@@ -179,14 +185,49 @@
         "CreatePostLogGroup"
       ]
     },
-    "CreatePostLambdaVersionp39qwTJsZxTMcOz4q0BasbikIVhkgSJSNeBPtB1Lc": {
+    "ListCategoryPostsLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/roboticists-apis/dev/1619133934278-2021-04-22T23:25:34.278Z/package.zip"
+        },
+        "Handler": "RoboticistsApis.Apis::RoboticistsApis.Apis.Controllers.PostsController::List",
+        "Runtime": "dotnetcore3.1",
+        "FunctionName": "roboticists-apis-dev-listCategoryPosts",
+        "MemorySize": 1024,
+        "Timeout": 6,
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "ListCategoryPostsLogGroup"
+      ]
+    },
+    "CreatePostLambdaVersionwYUJl0KufG3IA75plGL1NzgRLANYOHoZ5HNm88LXlg": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "CreatePostLambdaFunction"
         },
-        "CodeSha256": "yOJN1L3AeqHFP6d7WOK8sKgLzeAt5JlEJbUnQekttT8="
+        "CodeSha256": "PPXscH+lDeoTRkCil3wMt6A4tta+xJOkL8RgYH9ahbk="
+      }
+    },
+    "ListCategoryPostsLambdaVersionk8nY50LU8YWoWO2LLCq7h5pSPnX1bD53BwSD2tfs": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "ListCategoryPostsLambdaFunction"
+        },
+        "CodeSha256": "PPXscH+lDeoTRkCil3wMt6A4tta+xJOkL8RgYH9ahbk="
       }
     },
     "ApiGatewayRestApi": {
@@ -211,6 +252,33 @@
           ]
         },
         "PathPart": "posts",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayResourceCategoryposts": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Fn::GetAtt": [
+            "ApiGatewayRestApi",
+            "RootResourceId"
+          ]
+        },
+        "PathPart": "categoryposts",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayResourceCategorypostsCategoryVar": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Ref": "ApiGatewayResourceCategoryposts"
+        },
+        "PathPart": "{category}",
         "RestApiId": {
           "Ref": "ApiGatewayRestApi"
         }
@@ -304,7 +372,50 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1618966819581": {
+    "ApiGatewayMethodCategorypostsCategoryVarGet": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "GET",
+        "RequestParameters": {},
+        "ResourceId": {
+          "Ref": "ApiGatewayResourceCategorypostsCategoryVar"
+        },
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        },
+        "ApiKeyRequired": false,
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS_PROXY",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":apigateway:",
+                {
+                  "Ref": "AWS::Region"
+                },
+                ":lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "ListCategoryPostsLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "/invocations"
+              ]
+            ]
+          }
+        },
+        "MethodResponses": []
+      }
+    },
+    "ApiGatewayDeployment1619133933041": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -314,7 +425,8 @@
       },
       "DependsOn": [
         "ApiGatewayMethodPostsOptions",
-        "ApiGatewayMethodPostsPost"
+        "ApiGatewayMethodPostsPost",
+        "ApiGatewayMethodCategorypostsCategoryVarGet"
       ]
     },
     "CreatePostLambdaPermissionApiGateway": {
@@ -323,6 +435,43 @@
         "FunctionName": {
           "Fn::GetAtt": [
             "CreatePostLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "/*/*"
+            ]
+          ]
+        }
+      }
+    },
+    "ListCategoryPostsLambdaPermissionApiGateway": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "ListCategoryPostsLambdaFunction",
             "Arn"
           ]
         },
@@ -416,7 +565,13 @@
     "CreatePostLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "CreatePostLambdaVersionp39qwTJsZxTMcOz4q0BasbikIVhkgSJSNeBPtB1Lc"
+        "Ref": "CreatePostLambdaVersionwYUJl0KufG3IA75plGL1NzgRLANYOHoZ5HNm88LXlg"
+      }
+    },
+    "ListCategoryPostsLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "ListCategoryPostsLambdaVersionk8nY50LU8YWoWO2LLCq7h5pSPnX1bD53BwSD2tfs"
       }
     },
     "ServiceEndpoint": {
