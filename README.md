@@ -374,11 +374,6 @@ public static class Startup
 ```
 
 Let's look at the updated PostsController implementing the constructor to invoke Startup class's 'Build' method which adds and links related services such as AWS Credential, DynamoDBClient, instance of Repository Interface.
-> DynamoDBClient is requiring a AWS Credential configuration. If it's not binded correctly, error shows as follows :
-> The security token included in the request is invalid.: AmazonDynamoDBException
-   at Amazon.Runtime.Internal.HttpErrorResponseExceptionHandler.HandleExceptionStream(IRequestContext requestContext, IWebResponseData httpErrorResponse, HttpErrorResponseException exception, Stream responseStream)
-   at Amazon.Runtime.Internal.HttpErrorResponseExceptionHandler.HandleExceptionAsync(IExecutionContext executionContext, HttpErrorResponseException exception)
-   
 ```c#
 public class PostsController
 {
@@ -431,6 +426,32 @@ public class PostsController
     }
 }
 ```
+
+#### AWS Credential configuraiton
+- create setting file 'appsettings.json' on the same location as Main service configuration file (e.g. Startup.cs)
+```json
+{
+  "aws": {
+    "accessKey": "AKIA*********",
+    "secretKey": "X3OYi/5uRAHQR3ur**************"
+  }
+}
+```
+- declare the appsettings.json path on project setting (.csproj)
+```c#
+:
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+:
+```
+> DynamoDBClient is requiring a AWS Credential configuration. If it's not binded correctly, error shows as follows :
+> The security token included in the request is invalid.: AmazonDynamoDBException
+   at Amazon.Runtime.Internal.HttpErrorResponseExceptionHandler.HandleExceptionStream(IRequestContext requestContext, IWebResponseData httpErrorResponse, HttpErrorResponseException exception, Stream responseStream)
+   at Amazon.Runtime.Internal.HttpErrorResponseExceptionHandler.HandleExceptionAsync(IExecutionContext executionContext, HttpErrorResponseException exception)
+
 
 #### Role of repository
 Controller <-> Repository <-> Context (e.g. database, memory, etc) 
@@ -493,36 +514,44 @@ public class PostRepository : IPostRepository
 ---
 
 ```yml
-  listCategoryPosts:
-    handler: RoboticistsApis.Apis::RoboticistsApis.Apis.Controllers.PostsController::List
-    package:
-      artifact: bin/Release/netcoreapp3.1/package.zip
-    events:
-      - http:
-          path: categoryposts/{category}
-          method: get
+listCategoryPosts:
+   handler: RoboticistsApis.Apis::RoboticistsApis.Apis.Controllers.PostsController::List
+   package:
+     artifact: bin/Release/netcoreapp3.1/package.zip
+   events:
+     - http:
+         path: categoryposts/{category}
+         method: get
+         request:
+           parameters:
+             paths:
+               category: true
+```
+
+Handler Skeleton
+```c#
+public async Task<APIGatewayProxyResponse> List(APIGatewayProxyRequest proxyRequest)
+{
+    Console.WriteLine("Get List..");
+
+    var message = ">> List Hanlder ...";
+    var response = new APIGatewayProxyResponse()
+    {
+        StatusCode = (int) HttpStatusCode.OK,
+        Headers = new Dictionary<string, string>
+        {
+            {"Access-Control-Allow-Origin", "*"},
+            {"Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accepted"},
+            {"Content-Type", "application/json"}
+        },
+        Body = message.ToJson()
+    };
+
+    return response;
+}
 ```
 
 ---
 ### POST (with Authentication)
 ---
-#### AWS Credential configuraiton
-- create setting file 'appsettings.json' on the same location as Main service configuration file (e.g. Startup.cs)
-```json
-{
-  "aws": {
-    "accessKey": "AKIA*********",
-    "secretKey": "X3OYi/5uRAHQR3ur**************"
-  }
-}
-```
-- declare the appsettings.json path on project setting (.csproj)
-```c#
-:
-  <ItemGroup>
-    <None Update="appsettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-:
-```
+
