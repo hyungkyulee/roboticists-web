@@ -167,7 +167,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/roboticists-apis/dev/1619133934278-2021-04-22T23:25:34.278Z/package.zip"
+          "S3Key": "serverless/roboticists-apis/dev/1619479671902-2021-04-26T23:27:51.902Z/package.zip"
         },
         "Handler": "RoboticistsApis.Apis::RoboticistsApis.Apis.Controllers.PostsController::Post",
         "Runtime": "dotnetcore3.1",
@@ -192,7 +192,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/roboticists-apis/dev/1619133934278-2021-04-22T23:25:34.278Z/package.zip"
+          "S3Key": "serverless/roboticists-apis/dev/1619479671902-2021-04-26T23:27:51.902Z/package.zip"
         },
         "Handler": "RoboticistsApis.Apis::RoboticistsApis.Apis.Controllers.PostsController::List",
         "Runtime": "dotnetcore3.1",
@@ -210,24 +210,24 @@
         "ListCategoryPostsLogGroup"
       ]
     },
-    "CreatePostLambdaVersionwYUJl0KufG3IA75plGL1NzgRLANYOHoZ5HNm88LXlg": {
+    "CreatePostLambdaVersiontxQ9qhqu1QkTZKVsrrjnw4hOcYUAbfznrMgFl9LjA": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "CreatePostLambdaFunction"
         },
-        "CodeSha256": "PPXscH+lDeoTRkCil3wMt6A4tta+xJOkL8RgYH9ahbk="
+        "CodeSha256": "nHv9iKSfxnos8HrVWiJyNx5vxcaLE045CQCnqOWUdqU="
       }
     },
-    "ListCategoryPostsLambdaVersionk8nY50LU8YWoWO2LLCq7h5pSPnX1bD53BwSD2tfs": {
+    "ListCategoryPostsLambdaVersion1RGWorYfikSrI49dXpHINBsgO6eb9UpPOIWHqxVuo": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ListCategoryPostsLambdaFunction"
         },
-        "CodeSha256": "PPXscH+lDeoTRkCil3wMt6A4tta+xJOkL8RgYH9ahbk="
+        "CodeSha256": "nHv9iKSfxnos8HrVWiJyNx5vxcaLE045CQCnqOWUdqU="
       }
     },
     "ApiGatewayRestApi": {
@@ -376,7 +376,9 @@
       "Type": "AWS::ApiGateway::Method",
       "Properties": {
         "HttpMethod": "GET",
-        "RequestParameters": {},
+        "RequestParameters": {
+          "method.request.path.category": true
+        },
         "ResourceId": {
           "Ref": "ApiGatewayResourceCategorypostsCategoryVar"
         },
@@ -415,7 +417,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1619133933041": {
+    "ApiGatewayDeployment1619479670533": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -560,18 +562,27 @@
     "ServerlessDeploymentBucketName": {
       "Value": {
         "Ref": "ServerlessDeploymentBucket"
+      },
+      "Export": {
+        "Name": "sls-roboticists-apis-dev-ServerlessDeploymentBucketName"
       }
     },
     "CreatePostLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "CreatePostLambdaVersionwYUJl0KufG3IA75plGL1NzgRLANYOHoZ5HNm88LXlg"
+        "Ref": "CreatePostLambdaVersiontxQ9qhqu1QkTZKVsrrjnw4hOcYUAbfznrMgFl9LjA"
+      },
+      "Export": {
+        "Name": "sls-roboticists-apis-dev-CreatePostLambdaFunctionQualifiedArn"
       }
     },
     "ListCategoryPostsLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ListCategoryPostsLambdaVersionk8nY50LU8YWoWO2LLCq7h5pSPnX1bD53BwSD2tfs"
+        "Ref": "ListCategoryPostsLambdaVersion1RGWorYfikSrI49dXpHINBsgO6eb9UpPOIWHqxVuo"
+      },
+      "Export": {
+        "Name": "sls-roboticists-apis-dev-ListCategoryPostsLambdaFunctionQualifiedArn"
       }
     },
     "ServiceEndpoint": {
@@ -595,6 +606,9 @@
             "/dev"
           ]
         ]
+      },
+      "Export": {
+        "Name": "sls-roboticists-apis-dev-ServiceEndpoint"
       }
     }
   }

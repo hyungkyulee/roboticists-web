@@ -80,15 +80,20 @@ functions:
           path: posts
           method: post
           cors: true
-  
+          
   listCategoryPosts:
     handler: RoboticistsApis.Apis::RoboticistsApis.Apis.Controllers.PostsController::List
     package:
       artifact: bin/Release/netcoreapp3.1/package.zip
     events:
-        - http:
-            path: categoryposts/{category}
-            method: get
+      - http:
+          path: categoryposts/{category}
+          method: get
+          request:
+            parameters:
+              paths:
+                category: true
+          
           
 #      - websocket: $connect
 #      - s3: ${env:BUCKET}

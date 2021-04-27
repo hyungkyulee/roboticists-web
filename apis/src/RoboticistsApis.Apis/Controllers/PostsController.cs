@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Net;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text.Json.Serialization;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using Amazon;
 using Amazon.Lambda.APIGatewayEvents;
 using Amazon.Lambda.Core;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RoboticistsApis.Infrastructure;
 using RoboticistsApis.Models.Api;
@@ -66,9 +68,24 @@ namespace RoboticistsApis.Apis.Controllers
             return response;
         }
 
-        public HttpStatusCode List(APIGatewayProxyRequest proxyRequest)
+        public async Task<APIGatewayProxyResponse> List(APIGatewayProxyRequest proxyRequest)
         {
-            return HttpStatusCode.OK;
+            Console.WriteLine("Get List..");
+
+            var message = ">> List function ...";
+            var response = new APIGatewayProxyResponse()
+            {
+                StatusCode = (int) HttpStatusCode.OK,
+                Headers = new Dictionary<string, string>
+                {
+                    {"Access-Control-Allow-Origin", "*"},
+                    {"Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accepted"},
+                    {"Content-Type", "application/json"}
+                },
+                Body = message.ToJson()
+            };
+            
+            return response;
         }
     }
 }
