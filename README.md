@@ -30,16 +30,8 @@
   </PropertyGroup>
  ```
 
-## frontend app
 ---
-```bash
-$ cd webapp 
-$ npx create-react-app ./
-$ npm i
-$ npm start
-```
-
-## serverless (c# on AWS)
+## backend API on serverless platform (c# on AWS)
 reference : https://www.serverless.com/framework/docs/providers/aws/examples/hello-world/csharp/#hello-world-c-example 
 ---
 
@@ -552,6 +544,60 @@ public async Task<APIGatewayProxyResponse> List(APIGatewayProxyRequest proxyRequ
 ```
 
 ---
+---
+## frontend app
+
+---
 ### POST (with Authentication)
 ---
+
+#### Get started
+```bash
+$ cd webapp 
+$ npx create-react-app ./
+$ npm i
+$ npm start
+```
+
+#### Basic packages (React bootstrap)
+```bash
+npm install react-bootstrap bootstrap
+```
+[index.js]
+```js
+import 'bootstrap/dist/css/bootstrap.min.css'
+import './index.css'
+```
+> import the bootstrap.min.css before the index.css
+
+#### Basic packages (Router)
+```bash
+npm install react-router-dom
+```
+[app.js]
+```js
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+} from "react-router-dom"
+
+:
+function App() {
+  return (
+    <Router>
+      <div>App</div>
+    </Router>
+  );
+}
+:
+```
+
+---
+### POST (with Authentication)
+---
+
+
+
+
 
