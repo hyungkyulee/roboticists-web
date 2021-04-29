@@ -641,7 +641,7 @@ resources:
           Ref: blogUsersPool
         CallbackURLs:
           - http://localhost:3000/signedin
-          - https://u3fnac9d51.execute-api.eu-west-1.amazonaws.com/dev/signedin
+          - <host url>/signedin
         ExplicitAuthFlows:
           - ALLOW_CUSTOM_AUTH
           - ALLOW_USER_SRP_AUTH
@@ -657,10 +657,67 @@ resources:
         
 ```
 
+#### url for a hosted UI
+This can be checked in AWS Congnito colsole -> sidebar -> App Integration -> App client settings -> Hosted UI
+[example]
+https://<cognito hosted ui URI>/login?client_id=<client id>&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+phone+profile&redirect_uri=http://localhost:3000/signedin
 
+> After successfully signing in or registering, you’ll be redirected to https://<callback uri>/#id_token=<123*****>&expires_in=3600&token_type=Bearer
+> The id_token will be used in a API call for an authrization
 
+#### Token Overview
+[Session Auth]
+Send a "login info"  -> Save session to DB 
+Save Session Id      <- Return Cookie (Session Id)
 
+Send Auth request for API with Cookie (Session Id) -> Check Session Id with the stored session info from DB
+Handle API Response                                <- Return Response
 
+> Session can be only handled with Web Browser. Token-based Auth is required for other apps
+
+[Token Auth]
+Send a "Login info" -> Create JWT
+Save Token          <- Return JWT
+
+Send Auth request for API with JWT in Header -> Validate JWT
+Handle API Response                          <- Return Response
+
+JWT location on Client side according to platform :
+ - Browser: Local Storage
+ - IOS: Keychain
+ - Android: SharedPreferences
+
+JWT Overview
+(ref: https://bezkoder.com/jwt-json-web-token/)
+- JWT includes Header, Payload, Signature
+  - Header
+    ```json
+    {
+      "typ": "JWT",
+      "alg": "HS256"
+    }
+    ```
+   - Payload
+     ```json
+     {
+       "userId": "abcd12345ghijk",
+       "username": "bezkoder",
+       "email": "contact@bezkoder.com",
+       // standard fields
+       "iss": "zKoder, author of bezkoder.com",
+       "iat": 1570238918,
+       "exp": 1570238992
+     }
+     ```
+     > iss: issuer, iat: issed at, exp: expired at
+   - Header
+     ```js
+     const data = Base64UrlEncode(header) + '.' + Base64UrlEncode(payload);
+     const hashedData = Hash(data, secret);
+     const signature = Base64UrlEncode(hashedData);
+     
+     const JWT = encodedHeader + "." + encodedPayload + "." + signature;
+     ```
 
 ---
 ### POST (with Authentication)
