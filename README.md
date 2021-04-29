@@ -682,13 +682,10 @@ Save Token          <- Return JWT
 Send Auth request for API with JWT in Header -> Validate JWT
 Handle API Response                          <- Return Response
 
-JWT location on Client side according to platform :
- - Browser: Local Storage
- - IOS: Keychain
- - Android: SharedPreferences
-
-JWT Overview
-(ref: https://bezkoder.com/jwt-json-web-token/)
+[JWT Overview]
+(ref: https://docs.aws.amazon.com/cognito/latest/developerguide/amazon-cognito-user-pools-using-tokens-verifying-a-jwt.html, 
+      https://bezkoder.com/jwt-json-web-token/)
+      
 - JWT includes Header, Payload, Signature
   - Header
     ```json
@@ -700,13 +697,12 @@ JWT Overview
    - Payload
      ```json
      {
-       "userId": "abcd12345ghijk",
-       "username": "bezkoder",
-       "email": "contact@bezkoder.com",
-       // standard fields
-       "iss": "zKoder, author of bezkoder.com",
-       "iat": 1570238918,
-       "exp": 1570238992
+       "userId": "aaabbb111222",
+       "username": "namename",
+       "email": "email@domain.com",
+       "iss": "https://cognito-idp.us-east-1.amazonaws.com/<userpoolID>",
+       "iat": 1570550000,
+       "exp": 1570550100
      }
      ```
      > iss: issuer, iat: issed at, exp: expired at
@@ -718,6 +714,18 @@ JWT Overview
      
      const JWT = encodedHeader + "." + encodedPayload + "." + signature;
      ```
+
+[How to get JWT on frontend app]
+JWT location on Client side according to platform :
+ - Browser: Local Storage
+ - IOS: Keychain
+ - Android: SharedPreferences
+
+[Example at Chrome browser]
+![image](https://user-images.githubusercontent.com/59367560/116592249-b4f18080-a917-11eb-8277-737aaa60c0a5.png)
+
+
+
 
 ---
 ### POST (with Authentication)
