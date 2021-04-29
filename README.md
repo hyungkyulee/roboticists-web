@@ -548,9 +548,8 @@ public async Task<APIGatewayProxyResponse> List(APIGatewayProxyRequest proxyRequ
 ## frontend app
 
 ---
-### POST (with Authentication)
+### Basic Reactjs Webapp development environment
 ---
-
 #### Get started
 ```bash
 $ cd webapp 
@@ -592,6 +591,76 @@ function App() {
 }
 :
 ```
+
+---
+### UserPool(AWS Congnito) Configuration
+---
+#### Basic concept of AWS Cognito
+AWS Congnito UserPool 
+ - a managed user directory
+ - an identity provider
+ - a set of basic auth features inclusive (login, signup, email verification, password recovery, etc)
+ - JWT as a outcome of a login activity
+ - extension with Lambda Authorizer
+
+#### Create a UserPool
+```yml
+resources:
+  Resources:
+    blogUsersPool:                         -> UserPool to handle authenticated users
+      Type: AWS::Cognito::UserPool         
+      Properties:
+        MfaConfiguration: OFF
+        UserPoolName: BlogUsers
+        UsernameAttributes:
+          - email
+        AutoVerifiedAttributes:
+          - email
+        Policies:
+          PasswordPolicy:
+            MinimumLength: 6
+            RequireLowercase: False
+            RequireNumbers: False
+            RequireSymbols: False
+            RequireUppercase: False
+    blogUsersPoolClient:                   -> UserPool to handle un-authenticated users
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        ClientName: BlogUsersClient
+        GenerateSecret: False
+        AllowedOAuthFlows:
+          - implicit
+        AllowedOAuthFlowsUserPoolClient: true
+        AllowedOAuthScopes:
+          - phone
+          - email
+          - openid
+          - profile
+          - aws.cognito.signin.user.admin
+        UserPoolId:
+          Ref: blogUsersPool
+        CallbackURLs:
+          - http://localhost:3000/signedin
+          - https://u3fnac9d51.execute-api.eu-west-1.amazonaws.com/dev/signedin
+        ExplicitAuthFlows:
+          - ALLOW_CUSTOM_AUTH
+          - ALLOW_USER_SRP_AUTH
+          - ALLOW_REFRESH_TOKEN_AUTH
+        SupportedIdentityProviders:
+          - COGNITO
+    blogUsersPoolDomain:
+      Type: AWS::Cognito::UserPoolDomain
+      Properties:
+        UserPoolId:
+          Ref: blogUsersPool
+        Domain: roboticists
+        
+```
+
+
+
+
+
 
 ---
 ### POST (with Authentication)
