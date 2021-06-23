@@ -182,7 +182,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/roboticists-apis/dev/1619479671902-2021-04-26T23:27:51.902Z/package.zip"
+                "S3Key": "serverless/roboticists-apis/dev/1619721127106-2021-04-29T18:32:07.106Z/package.zip"
               },
               "Handler": "RoboticistsApis.Apis::RoboticistsApis.Apis.Controllers.PostsController::Post",
               "Runtime": "dotnetcore3.1",
@@ -207,7 +207,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/roboticists-apis/dev/1619479671902-2021-04-26T23:27:51.902Z/package.zip"
+                "S3Key": "serverless/roboticists-apis/dev/1619721127106-2021-04-29T18:32:07.106Z/package.zip"
               },
               "Handler": "RoboticistsApis.Apis::RoboticistsApis.Apis.Controllers.PostsController::List",
               "Runtime": "dotnetcore3.1",
@@ -225,24 +225,24 @@
               "ListCategoryPostsLogGroup"
             ]
           },
-          "CreatePostLambdaVersiontxQ9qhqu1QkTZKVsrrjnw4hOcYUAbfznrMgFl9LjA": {
+          "CreatePostLambdaVersion1Igh7NuQHeecmdZchQSsafPtmtTlzKWyfosd9kQFOU": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "CreatePostLambdaFunction"
               },
-              "CodeSha256": "nHv9iKSfxnos8HrVWiJyNx5vxcaLE045CQCnqOWUdqU="
+              "CodeSha256": "GapHAIDtNPEfC+w1q/oQdiYT2Gps2nuVHYrmp6PVQlg="
             }
           },
-          "ListCategoryPostsLambdaVersion1RGWorYfikSrI49dXpHINBsgO6eb9UpPOIWHqxVuo": {
+          "ListCategoryPostsLambdaVersionkIkwS8RwqichnAZs9PET52ZHWrcRWlgwuhZygjsM": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ListCategoryPostsLambdaFunction"
               },
-              "CodeSha256": "nHv9iKSfxnos8HrVWiJyNx5vxcaLE045CQCnqOWUdqU="
+              "CodeSha256": "GapHAIDtNPEfC+w1q/oQdiYT2Gps2nuVHYrmp6PVQlg="
             }
           },
           "ApiGatewayRestApi": {
@@ -432,7 +432,7 @@
               "MethodResponses": []
             }
           },
-          "ApiGatewayDeployment1619479670533": {
+          "ApiGatewayDeployment1619721125875": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -520,6 +520,70 @@
               }
             }
           },
+          "blogUsersPool": {
+            "Type": "AWS::Cognito::UserPool",
+            "Properties": {
+              "MfaConfiguration": "OFF",
+              "UserPoolName": "BlogUsers",
+              "UsernameAttributes": [
+                "email"
+              ],
+              "AutoVerifiedAttributes": [
+                "email"
+              ],
+              "Policies": {
+                "PasswordPolicy": {
+                  "MinimumLength": 6,
+                  "RequireLowercase": false,
+                  "RequireNumbers": false,
+                  "RequireSymbols": false,
+                  "RequireUppercase": false
+                }
+              }
+            }
+          },
+          "blogUsersPoolClient": {
+            "Type": "AWS::Cognito::UserPoolClient",
+            "Properties": {
+              "ClientName": "BlogUsersClient",
+              "GenerateSecret": false,
+              "AllowedOAuthFlows": [
+                "implicit"
+              ],
+              "AllowedOAuthFlowsUserPoolClient": true,
+              "AllowedOAuthScopes": [
+                "phone",
+                "email",
+                "openid",
+                "profile",
+                "aws.cognito.signin.user.admin"
+              ],
+              "UserPoolId": {
+                "Ref": "blogUsersPool"
+              },
+              "CallbackURLs": [
+                "http://localhost:3000/signedin",
+                "https://u3fnac9d51.execute-api.eu-west-1.amazonaws.com/dev/signedin"
+              ],
+              "ExplicitAuthFlows": [
+                "ALLOW_CUSTOM_AUTH",
+                "ALLOW_USER_SRP_AUTH",
+                "ALLOW_REFRESH_TOKEN_AUTH"
+              ],
+              "SupportedIdentityProviders": [
+                "COGNITO"
+              ]
+            }
+          },
+          "blogUsersPoolDomain": {
+            "Type": "AWS::Cognito::UserPoolDomain",
+            "Properties": {
+              "UserPoolId": {
+                "Ref": "blogUsersPool"
+              },
+              "Domain": "roboticists"
+            }
+          },
           "blogPostsTable": {
             "Type": "AWS::DynamoDB::Table",
             "Properties": {
@@ -585,7 +649,7 @@
           "CreatePostLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "CreatePostLambdaVersiontxQ9qhqu1QkTZKVsrrjnw4hOcYUAbfznrMgFl9LjA"
+              "Ref": "CreatePostLambdaVersion1Igh7NuQHeecmdZchQSsafPtmtTlzKWyfosd9kQFOU"
             },
             "Export": {
               "Name": "sls-roboticists-apis-dev-CreatePostLambdaFunctionQualifiedArn"
@@ -594,7 +658,7 @@
           "ListCategoryPostsLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ListCategoryPostsLambdaVersion1RGWorYfikSrI49dXpHINBsgO6eb9UpPOIWHqxVuo"
+              "Ref": "ListCategoryPostsLambdaVersionkIkwS8RwqichnAZs9PET52ZHWrcRWlgwuhZygjsM"
             },
             "Export": {
               "Name": "sls-roboticists-apis-dev-ListCategoryPostsLambdaFunctionQualifiedArn"
@@ -752,7 +816,7 @@
         "timeout": 6,
         "runtime": "dotnetcore3.1",
         "vpc": {},
-        "versionLogicalId": "CreatePostLambdaVersiontxQ9qhqu1QkTZKVsrrjnw4hOcYUAbfznrMgFl9LjA"
+        "versionLogicalId": "CreatePostLambdaVersion1Igh7NuQHeecmdZchQSsafPtmtTlzKWyfosd9kQFOU"
       },
       "listCategoryPosts": {
         "handler": "RoboticistsApis.Apis::RoboticistsApis.Apis.Controllers.PostsController::List",
@@ -778,11 +842,75 @@
         "timeout": 6,
         "runtime": "dotnetcore3.1",
         "vpc": {},
-        "versionLogicalId": "ListCategoryPostsLambdaVersion1RGWorYfikSrI49dXpHINBsgO6eb9UpPOIWHqxVuo"
+        "versionLogicalId": "ListCategoryPostsLambdaVersionkIkwS8RwqichnAZs9PET52ZHWrcRWlgwuhZygjsM"
       }
     },
     "resources": {
       "Resources": {
+        "blogUsersPool": {
+          "Type": "AWS::Cognito::UserPool",
+          "Properties": {
+            "MfaConfiguration": "OFF",
+            "UserPoolName": "BlogUsers",
+            "UsernameAttributes": [
+              "email"
+            ],
+            "AutoVerifiedAttributes": [
+              "email"
+            ],
+            "Policies": {
+              "PasswordPolicy": {
+                "MinimumLength": 6,
+                "RequireLowercase": false,
+                "RequireNumbers": false,
+                "RequireSymbols": false,
+                "RequireUppercase": false
+              }
+            }
+          }
+        },
+        "blogUsersPoolClient": {
+          "Type": "AWS::Cognito::UserPoolClient",
+          "Properties": {
+            "ClientName": "BlogUsersClient",
+            "GenerateSecret": false,
+            "AllowedOAuthFlows": [
+              "implicit"
+            ],
+            "AllowedOAuthFlowsUserPoolClient": true,
+            "AllowedOAuthScopes": [
+              "phone",
+              "email",
+              "openid",
+              "profile",
+              "aws.cognito.signin.user.admin"
+            ],
+            "UserPoolId": {
+              "Ref": "blogUsersPool"
+            },
+            "CallbackURLs": [
+              "http://localhost:3000/signedin",
+              "https://u3fnac9d51.execute-api.eu-west-1.amazonaws.com/dev/signedin"
+            ],
+            "ExplicitAuthFlows": [
+              "ALLOW_CUSTOM_AUTH",
+              "ALLOW_USER_SRP_AUTH",
+              "ALLOW_REFRESH_TOKEN_AUTH"
+            ],
+            "SupportedIdentityProviders": [
+              "COGNITO"
+            ]
+          }
+        },
+        "blogUsersPoolDomain": {
+          "Type": "AWS::Cognito::UserPoolDomain",
+          "Properties": {
+            "UserPoolId": {
+              "Ref": "blogUsersPool"
+            },
+            "Domain": "roboticists"
+          }
+        },
         "blogPostsTable": {
           "Type": "AWS::DynamoDB::Table",
           "Properties": {
@@ -853,7 +981,7 @@
       },
       "package": {
         "individually": true,
-        "artifactDirectoryName": "serverless/roboticists-apis/dev/1619479671902-2021-04-26T23:27:51.902Z"
+        "artifactDirectoryName": "serverless/roboticists-apis/dev/1619721127106-2021-04-29T18:32:07.106Z"
       },
       "functions": {
         "$ref": "$[\"service\"][\"functions\"]"
@@ -866,7 +994,7 @@
   },
   "package": {
     "individually": true,
-    "artifactDirectoryName": "serverless/roboticists-apis/dev/1619479671902-2021-04-26T23:27:51.902Z",
+    "artifactDirectoryName": "serverless/roboticists-apis/dev/1619721127106-2021-04-29T18:32:07.106Z",
     "artifact": ""
   }
 }
