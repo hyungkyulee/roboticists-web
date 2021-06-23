@@ -30,16 +30,8 @@
   </PropertyGroup>
  ```
 
-## frontend app
 ---
-```bash
-$ cd webapp 
-$ npx create-react-app ./
-$ npm i
-$ npm start
-```
-
-## serverless (c# on AWS)
+## backend API on serverless platform (c# on AWS)
 reference : https://www.serverless.com/framework/docs/providers/aws/examples/hello-world/csharp/#hello-world-c-example 
 ---
 
@@ -552,6 +544,194 @@ public async Task<APIGatewayProxyResponse> List(APIGatewayProxyRequest proxyRequ
 ```
 
 ---
+---
+## frontend app
+
+---
+### Basic Reactjs Webapp development environment
+---
+#### Get started
+```bash
+$ cd webapp 
+$ npx create-react-app ./
+$ npm i
+$ npm start
+```
+
+#### Basic packages (React bootstrap)
+```bash
+npm install react-bootstrap bootstrap
+```
+[index.js]
+```js
+import 'bootstrap/dist/css/bootstrap.min.css'
+import './index.css'
+```
+> import the bootstrap.min.css before the index.css
+
+#### Basic packages (Router)
+```bash
+npm install react-router-dom
+```
+[app.js]
+```js
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+} from "react-router-dom"
+
+:
+function App() {
+  return (
+    <Router>
+      <div>App</div>
+    </Router>
+  );
+}
+:
+```
+
+---
+### UserPool(AWS Congnito) Configuration
+---
+#### Basic concept of AWS Cognito
+AWS Congnito UserPool 
+ - a managed user directory
+ - an identity provider
+ - a set of basic auth features inclusive (login, signup, email verification, password recovery, etc)
+ - JWT as a outcome of a login activity
+ - extension with Lambda Authorizer
+
+#### Create a UserPool
+```yml
+resources:
+  Resources:
+    blogUsersPool:                         -> UserPool to handle authenticated users
+      Type: AWS::Cognito::UserPool         
+      Properties:
+        MfaConfiguration: OFF
+        UserPoolName: BlogUsers
+        UsernameAttributes:
+          - email
+        AutoVerifiedAttributes:
+          - email
+        Policies:
+          PasswordPolicy:
+            MinimumLength: 6
+            RequireLowercase: False
+            RequireNumbers: False
+            RequireSymbols: False
+            RequireUppercase: False
+    blogUsersPoolClient:                   -> UserPool to handle un-authenticated users
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        ClientName: BlogUsersClient
+        GenerateSecret: False
+        AllowedOAuthFlows:
+          - implicit
+        AllowedOAuthFlowsUserPoolClient: true
+        AllowedOAuthScopes:
+          - phone
+          - email
+          - openid
+          - profile
+          - aws.cognito.signin.user.admin
+        UserPoolId:
+          Ref: blogUsersPool
+        CallbackURLs:
+          - http://localhost:3000/signedin
+          - <host url>/signedin
+        ExplicitAuthFlows:
+          - ALLOW_CUSTOM_AUTH
+          - ALLOW_USER_SRP_AUTH
+          - ALLOW_REFRESH_TOKEN_AUTH
+        SupportedIdentityProviders:
+          - COGNITO
+    blogUsersPoolDomain:
+      Type: AWS::Cognito::UserPoolDomain
+      Properties:
+        UserPoolId:
+          Ref: blogUsersPool
+        Domain: roboticists
+        
+```
+
+#### url for a hosted UI
+This can be checked in AWS Congnito colsole -> sidebar -> App Integration -> App client settings -> Hosted UI
+[example]
+https://<cognito hosted ui URI>/login?client_id=<client id>&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+phone+profile&redirect_uri=http://localhost:3000/signedin
+
+> After successfully signing in or registering, you’ll be redirected to https://<callback uri>/#id_token=<123*****>&expires_in=3600&token_type=Bearer
+> The id_token will be used in a API call for an authrization
+
+#### Token Overview
+[Session Auth]
+Send a "login info"  -> Save session to DB 
+Save Session Id      <- Return Cookie (Session Id)
+
+Send Auth request for API with Cookie (Session Id) -> Check Session Id with the stored session info from DB
+Handle API Response                                <- Return Response
+
+> Session can be only handled with Web Browser. Token-based Auth is required for other apps
+
+[Token Auth]
+Send a "Login info" -> Create JWT
+Save Token          <- Return JWT
+
+Send Auth request for API with JWT in Header -> Validate JWT
+Handle API Response                          <- Return Response
+
+[JWT Overview]
+(ref: https://docs.aws.amazon.com/cognito/latest/developerguide/amazon-cognito-user-pools-using-tokens-verifying-a-jwt.html, 
+      https://bezkoder.com/jwt-json-web-token/)
+      
+- JWT includes Header, Payload, Signature
+  - Header
+    ```json
+    {
+      "typ": "JWT",
+      "alg": "HS256"
+    }
+    ```
+   - Payload
+     ```json
+     {
+       "userId": "aaabbb111222",
+       "username": "namename",
+       "email": "email@domain.com",
+       "iss": "https://cognito-idp.us-east-1.amazonaws.com/<userpoolID>",
+       "iat": 1570550000,
+       "exp": 1570550100
+     }
+     ```
+     > iss: issuer, iat: issed at, exp: expired at
+   - Header
+     ```js
+     const data = Base64UrlEncode(header) + '.' + Base64UrlEncode(payload);
+     const hashedData = Hash(data, secret);
+     const signature = Base64UrlEncode(hashedData);
+     
+     const JWT = encodedHeader + "." + encodedPayload + "." + signature;
+     ```
+
+[How to get JWT on frontend app]
+JWT location on Client side according to platform :
+ - Browser: Local Storage
+ - IOS: Keychain
+ - Android: SharedPreferences
+
+[Example at Chrome browser]
+![image](https://user-images.githubusercontent.com/59367560/116592249-b4f18080-a917-11eb-8277-737aaa60c0a5.png)
+
+
+
+
+---
 ### POST (with Authentication)
 ---
+
+
+
+
 
